@@ -22,3 +22,11 @@ Feel free to make PRs to adjust the campaign's gameplay for EE (ex. modifying Ar
 After cloning the repository, symlink all 3 mod folders (`Mods/RogueLikeArenaEE...`, `Projects/RogueLikeArenaEE...`, and `Public/RogueLikeArenaEE...`) into their corresponding path in `DefEd/Data`. To be able to load the mod in the editor you will also need all dependencies (EE Core & Roguelike Arena) unpacked and loadable as projects - this involves get their `Editor` folders if you want levels to be loadable.
 
 Roguelike Arena's `Editor` folder for the version from 15/06 can be found [here](https://drive.google.com/file/d/145CStO2Ks89KRqPD49jgfDWiu8w6A9Ko/view?usp=sharing). **Before using it, check if Bonesnake has posted an updated version anywhere**.
+
+### Scripting
+
+`Z_PIP_EEConsiderations` goal contains the Meditate & Source Infusions unlocks, largely copied from EE Origins.
+
+### Mapping
+
+The only change to the main level (`RoguelikeArena_Level`) is adding the EE UI level template, north of the lobby template. This would have to be moved if any additional arenas are added in that spot, though Bonesnake says any further ones are likely to be added to the east of existing ones instead.
