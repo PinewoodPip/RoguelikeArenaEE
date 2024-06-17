@@ -1,0 +1,106 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+//===========================================================//
+// R O G U E L I K E L I K E     C O N S I D E R A T I O N S //
+//                                                           //
+//   Largely copy-pasted from Matteo "Ameranth" T. (2018)    //
+//===========================================================//
+//Special script for joining Epic Encounters'
+//systems with the Roguelike Arena campaign.
+
+PROC_PIP_EE_GlobalInit();
+
+KBSECTION
+
+IF RegionStarted("RoguelikeArena_Level")
+AND
+DB_IsPlayer(_Char)
+THEN
+PROC_AMER_Source_TryUnlockSourceGen(_Char, 1);
+PROC_PIP_TryUnlockMeditate(_Char);
+
+PROC PROC_PIP_EE_GlobalInit()
+AND
+DB_AMER_ModMode(_OldMode)
+THEN
+NOT DB_AMER_ModMode(_OldMode);
+
+PROC PROC_PIP_EE_GlobalInit()
+THEN
+DB_AMER_ModMode("RoguelikeArena");
+PROC_AMER_GEN_Goal_Activate("AMER_GLO_NPCScaling_Internal");
+PROC_AMER_GEN_Goal_Activate("AMER_GLO_NPCScaling_Skills");
+PROC_AMER_GEN_Goal_Activate("AMER_GLO_NPCScaling_Resistance");
+PROC_AMER_GEN_Goal_Activate("AMER_GLO_NPCScaling_DiffPresets");
+
+
+//REGION Un/Locking Source.
+
+PROC PROC_RoguelikeArena_MakeCompanion((CHARACTERGUID)_Character, (STRING)_TransformTemplate, (STRING)_HenchmanPreset, (CHARACTERGUID)_Recruiter)
+THEN
+PROC_AMER_Source_TryUnlockSourceGen(_Character, 1);
+PROC_PIP_TryUnlockMeditate(_Character);
+CharacterAddSkill(_Character, "Shout_SourceInfusion");
+CharacterStatusText(_Character, "test");
+
+PROC PROC_AMER_GEN_FilteredStatus_Removed((CHARACTERGUID)_Char, (CHARACTERGUID)_Source, "SOURCE_MUTED")
+AND
+DB_IsPlayer(_Char)
+AND
+NOT QRY_AMER_GEN_IsDeadOrDying(_Char)
+AND
+NOT DB_Illusionist(_Char, _)    //Mirror unequips the collar.
+THEN
+PROC_AMER_Source_TryUnlockSourceGen(_Char, 1);
+
+
+// PROC PROC_AMER_GEN_FilteredStatus_Applied((CHARACTERGUID)_Char, (CHARACTERGUID)_Source, "SOURCE_MUTED", (INTEGER)_Turns)
+// AND
+// DB_IsPlayer(_Char)
+// THEN
+// PROC_AMER_Source_TryLockSourceGen(_Char);
+
+
+//Try to unlock source gen on being resurrected, as if we died with it locked we may have lost it.
+PROC ProcObjectTimerFinished((CHARACTERGUID)_Char, "AMER_CharResurrecting")
+AND
+HasActiveStatus(_Char, "SOURCE_MUTED", 0)
+THEN
+PROC_AMER_Source_TryUnlockSourceGen(_Char, 1);
+
+//END_REGION
+
+
+//REGION Ascension point progression.
+
+PROC PROC_PIP_TryUnlockMeditate()
+AND
+DB_IsPlayer(_Char)
+THEN
+PROC_PIP_TryUnlockMeditate(_Char);
+
+PROC PROC_PIP_TryUnlockMeditate((CHARACTERGUID)_Char)
+AND
+CharacterHasSkill(_Char, "Shout_NexusMeditate", 0)
+THEN
+CharacterAddSkill(_Char, "Shout_NexusMeditate", 1);
+
+
+//Grant a point when leveling up.
+IF
+CharacterLeveledUp(_Char)
+AND
+DB_IsPlayer(_Char)
+AND
+DB_AMER_ModMode("RoguelikeArena")
+AND
+CharacterGetLevel(_Char, _Level)
+THEN
+PROC_AMER_UI_Ascension_TotalPointsFound_CheckSet_FromSource(_Level, "PartyLevel");
+PROC_AMER_UI_Ascension_PointsRemaining_TryAdd_FromSource(_Char, 1, "PartyLevel");
+
+EXITSECTION
+
+ENDEXITSECTION
+ParentTargetEdge "Start_AMER"

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<save>
+    <header version="2" />
+    <version major="3" minor="6" revision="6" build="0" />
+    <region id="MetaData">
+        <node id="root">
+            <attribute id="Module" value="48e4a8c5-1ff1-4f2e-9ba5-7625e0150903" type="23" />
+            <attribute id="Name" value="RoguelikeArenaEE" type="23" />
+            <attribute id="Type" value="Add-on" type="23" />
+            <attribute id="UUID" value="a486323b-6197-4fe6-8b7b-aab1c7531bf2" type="23" />
+        </node>
+    </region>
+</save>
